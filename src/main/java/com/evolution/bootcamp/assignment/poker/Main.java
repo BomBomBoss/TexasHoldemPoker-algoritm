@@ -79,20 +79,57 @@ public class Main
 
     private void masterCombinationCheck(Player player)
     {
+        List<Integer> numbers = player.getBoardAndPlayerCards().stream().map(x -> Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
+        List<String> cardSuits = player.getBoardAndPlayerCards().stream().map(x->x.replaceAll("\\d","")).collect(Collectors.toList());
+
+        straightFlushCheck(player, numbers, cardSuits);
 
     }
 
-    private void straightCheck(Player player)
+    private boolean isStraight(List<Integer> numbers)
     {
-       List<Integer> numbers = player.getBoardAndPlayerCards().stream().map(x->Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
-       List<String> cardSuit = player.getBoardAndPlayerCards().stream().map(x->x.replaceAll("\\d","")).collect(Collectors.toList());
+        boolean straight = false;
 
-       int difference;
-       for(int i = 0; i< numbers.size(); i++)
-       {
-           difference = numbers.get(i+1) - numbers.get(i);
+        for (int i = 0; i < numbers.size() - 1; i++)
+        {
+            if (numbers.get(i) - numbers.get(i + 1) == 1)
+            {
+                if (i == numbers.size() - 1)
+                {
+                    straight = true;
+                }
+            } else break;
+        }
+        return straight;
+    }
 
-       }
+    private boolean isFlush(List<String> suits)
+    {
+        Set<String> cardSuit = new HashSet<>(suits);
+        return cardSuit.size()<3;
+    }
+
+    private void straightFlushCheck(Player player, List<Integer> numbers, List<String> suits)
+    {
+        boolean straight = isStraight(numbers);
+        boolean flush = isFlush(suits);
+
+        if(straight || flush)
+        {
+            if(straight && !flush)
+            {
+                player.setValue(HandValue.STRAIGHT);
+            }
+            else if (!straight)
+            {
+                player.setValue(HandValue.FLUSH);
+            }
+            player.setValue(HandValue.STRAIGHT_FLUSH);
+        }
+    }
+
+    private void fourOfKind(Player player)
+    {
 
     }
 
