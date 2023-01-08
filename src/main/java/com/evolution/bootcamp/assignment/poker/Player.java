@@ -2,12 +2,14 @@ package com.evolution.bootcamp.assignment.poker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class Player
 {
     private String combination;
     private String[] sortedCombination;
+
     private Enum<HandValue> value;
 
     private String gameTitle;

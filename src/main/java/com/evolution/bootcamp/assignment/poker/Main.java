@@ -72,64 +72,155 @@ public class Main
         for (Player player : players)
         {
             player.combineAndSortCards();
-            System.out.println(players);
+            masterCombinationCheck(player);
         }
+        System.out.println(players);
+        System.out.println(findWinner(players).stream().map(Player::getCombination).collect(Collectors.toList()));
 
     }
 
-    private void masterCombinationCheck(Player player)
+    private static List<Player> findWinner(List<Player> players)
+    {
+        players.sort((player1, player2) ->
+        {
+            HandValue value1 = (HandValue) player1.getValue();
+            HandValue value2 = (HandValue) player2.getValue();
+            return value2.getStrength().compareTo(value1.getStrength());
+        });
+        return players;
+    }
+
+    private static void masterCombinationCheck(Player player)
     {
         List<Integer> numbers = player.getBoardAndPlayerCards().stream().map(x -> Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
         List<String> cardSuits = player.getBoardAndPlayerCards().stream().map(x->x.replaceAll("\\d","")).collect(Collectors.toList());
 
         straightFlushCheck(player, numbers, cardSuits);
 
+
+
     }
 
-    private boolean isStraight(List<Integer> numbers)
+    private static boolean isStraight(List<Integer> numbers)
     {
-        boolean straight = false;
 
-        for (int i = 0; i < numbers.size() - 1; i++)
+        for (int y = 0; y < 3; y++)
         {
-            if (numbers.get(i) - numbers.get(i + 1) == 1)
+            for (int i = 0; i < 5; i++)
             {
-                if (i == numbers.size() - 1)
+                if (numbers.get(y + i) - numbers.get(i + 1) == 1)
                 {
-                    straight = true;
+                    if (i == 4)
+                    {
+                        return true;
+                    }
                 }
-            } else break;
+            }
         }
-        return straight;
+
+        return false;
     }
 
-    private boolean isFlush(List<String> suits)
+    private static boolean isFlush(List<String> suits)
     {
-        Set<String> cardSuit = new HashSet<>(suits);
-        return cardSuit.size()<3;
-    }
-
-    private void straightFlushCheck(Player player, List<Integer> numbers, List<String> suits)
-    {
-        boolean straight = isStraight(numbers);
-        boolean flush = isFlush(suits);
-
-        if(straight || flush)
+        Set<String> set;
+        Collections.sort(suits);
+        for(int i = 0; i<3; i++)
         {
-            if(straight && !flush)
-            {
-                player.setValue(HandValue.STRAIGHT);
-            }
-            else if (!straight)
-            {
-                player.setValue(HandValue.FLUSH);
-            }
+            set = new HashSet<>(suits.subList(i, 5+i));
+            if (set.size() == 1) return true;
+        }
+        return false;
+    }
+
+    private static void flushCheck(Player player, List<Integer> numbers, List<String> suits)
+    {
+        if (isFlush(suits)) player.setValue(HandValue.FLUSH);
+        else straightCheck(player,numbers);
+    }
+
+    private static void straightCheck(Player player, List<Integer> numbers)
+    {
+        if(isStraight(numbers)) player.setValue(HandValue.STRAIGHT);
+        else threeOfAKindCheck(player, numbers);
+
+
+    }
+
+    private static void straightFlushCheck(Player player, List<Integer> numbers, List<String> suits)
+    {
+        if(isStraight(numbers) && isFlush(suits))
+        {
             player.setValue(HandValue.STRAIGHT_FLUSH);
         }
+        else
+        {
+            fourOfKind(player, numbers, suits);
+        }
     }
 
-    private void fourOfKind(Player player)
+    private static void fourOfKind(Player player, List<Integer> numbers, List<String> suits)
     {
+            Set<Integer> set;
+            for(int i = 0; i<4; i++)
+            {
+                set = new HashSet<>(numbers.subList(i, 4+i));
+                if (set.size() == 1)
+                {
+                    player.setValue(HandValue.FOUR_OF_A_KIND);
+                    break;
+                }
+            }
+            if (player.getValue()==null)
+            {
+                fullHouseCheck(player,numbers, suits);
+            }
+
+    }
+
+    private static void fullHouseCheck(Player player, List<Integer> numbers, List<String> suits)
+    {
+        Set<Integer> set = new HashSet<>(numbers);
+        if(set.size()==3) player.setValue(HandValue.FULL_HOUSE);
+        else if (set.size()==4)
+        {
+            for(int i = 0; i<5; i++)
+            {
+                set = new HashSet<>(numbers.subList(i, 3+i));
+                if (set.size() == 1) player.setValue(HandValue.FULL_HOUSE);
+            }
+
+        } else flushCheck(player,numbers,suits);
+
+    }
+
+    private static void threeOfAKindCheck(Player player, List<Integer> numbers)
+    {
+        Set<Integer> set = new HashSet<>(numbers);
+            if(set.size()==5)
+                for(int i = 0; i<5; i++)
+                {
+                    set = new HashSet<>(numbers.subList(i, 3+i));
+                    if (set.size() == 1) player.setValue(HandValue.THREE_OF_A_KIND);
+                }
+            else twoPairsCheck(player,numbers);
+
+    }
+
+    private static void twoPairsCheck(Player player, List<Integer> numbers)
+    {
+        Set<Integer> set = new HashSet<>(numbers);
+        if(set.size()==4 || set.size()==5) player.setValue(HandValue.TWO_PAIRS);
+        else pairCheck(player, numbers);
+
+    }
+
+    // 11 22 33 4   11 22 345
+    private static void pairCheck(Player player, List<Integer> numbers)
+    {
+        Set<Integer> set = new HashSet<>(numbers);
+        if(set.size()!= numbers.size()) player.setValue(HandValue.PAIR);
+        else player.setValue(HandValue.HIGH_CARD);
 
     }
 
