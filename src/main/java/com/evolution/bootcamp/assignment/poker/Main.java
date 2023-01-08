@@ -74,9 +74,9 @@ public class Main
             player.combineAndSortCards();
             masterCombinationCheck(player);
         }
-        System.out.println(players);
-        System.out.println(findWinner(players).stream().map(Player::getCombination).collect(Collectors.toList()));
-
+        findWinner(players);
+        sortByHighestCard(players);
+        outputResult(players);
     }
 
     private static List<Player> findWinner(List<Player> players)
@@ -103,7 +103,6 @@ public class Main
 
     private static boolean isStraight(List<Integer> numbers)
     {
-
         for (int y = 0; y < 3; y++)
         {
             for (int i = 0; i < 5; i++)
@@ -117,7 +116,6 @@ public class Main
                 }
             }
         }
-
         return false;
     }
 
@@ -223,6 +221,66 @@ public class Main
         else player.setValue(HandValue.HIGH_CARD);
 
     }
+
+    private static void sortByHighestCard(List<Player> players)
+    {
+        Set<HandValue> setOfStrength = players.stream().map(Player::getValue).map(x->(HandValue)x).collect(Collectors.toSet());
+        if(setOfStrength.size()!= players.size())
+        {
+            for (int i = 0; i < players.size() - 1;)
+            {
+                Player player1 = players.get(i);
+                Player player2 = players.get(i + 1);
+
+                if (player1.getValue().equals(player2.getValue()))
+                {
+                    List<Integer> playerOneCards = Arrays.stream(player1.getSortedCombination()).map(x->Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
+                    List <Integer> playerTwoCards = Arrays.stream(player2.getSortedCombination()).map(x->Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
+
+                    int x = playerTwoCards.get(0).compareTo(playerOneCards.get(0));
+                    if (x < 0)
+                    {
+                        Collections.swap(players, i, i + 1);
+                        i = 0;
+                    }
+                    else if (x == 0)
+                    {
+                        x = playerTwoCards.get(1).compareTo(playerOneCards.get(1));
+                        if (x < 0)
+                        {
+                            Collections.swap(players, i, i + 1);
+                            i = 0;
+                        } else if (x == 0) i++;
+                    } else i++;
+                }
+                else i++;
+            }
+        }
+    }
+
+    private static void outputResult(List<Player> players)
+    {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < players.size() - 1; i++)
+        {
+           Player player1 = players.get(i);
+           Player player2 = players.get(i+1);
+           result.append(players.get(i).getCombination());
+
+           if(player1.getValue().equals(player2.getValue()))
+           {
+               String value1 = Arrays.toString(player1.getSortedCombination()).trim().replaceAll(",","").replaceAll("\\D","");
+               String value2 = Arrays.toString(player2.getSortedCombination()).trim().replaceAll(",","").replaceAll("\\D","");
+
+               if(value1.equals(value2)) result.append("=");
+           }
+           else result.append(" ");
+           if (i == players.size() - 2) result.append(players.get(i + 1).getCombination());
+        }
+        System.out.println(result);
+    }
+
+
 
 
 

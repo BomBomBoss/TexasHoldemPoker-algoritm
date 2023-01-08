@@ -17,9 +17,21 @@ public class Player
     private String boardCombination;
     private String[] boardCombinationSorted;
     private List<String> boardAndPlayerCards;
+
+    private boolean isEquals = false;
     public String getGameTitle()
     {
         return gameTitle;
+    }
+
+    public boolean isEquals()
+    {
+        return isEquals;
+    }
+
+    public void setEquals(boolean equals)
+    {
+        isEquals = equals;
     }
 
     public List<String> getBoardAndPlayerCards()
