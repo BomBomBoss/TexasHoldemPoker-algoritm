@@ -21,7 +21,6 @@ a = 14
 public class Main
 {
    static List<Character> characterList;
-   static List<Player> people = new ArrayList<>();
 
    static
    {
@@ -31,6 +30,7 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         String [] example;
+        List<Player> people = new ArrayList<>();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
@@ -94,6 +94,7 @@ public class Main
     {
         List<Integer> numbers = player.getBoardAndPlayerCards().stream().map(x -> Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
         List<String> cardSuits = player.getBoardAndPlayerCards().stream().map(x->x.replaceAll("\\d","")).collect(Collectors.toList());
+        Collections.sort(cardSuits);
 
         straightFlushCheck(player, numbers, cardSuits);
 
@@ -105,11 +106,13 @@ public class Main
     {
         for (int y = 0; y < 3; y++)
         {
+            int counter = 0;
             for (int i = 0; i < 5; i++)
             {
                 if (numbers.get(y + i) - numbers.get(i + 1) == 1)
                 {
-                    if (i == 4)
+                    counter++;
+                    if (i == 4 && counter == 5)
                     {
                         return true;
                     }
@@ -196,12 +199,14 @@ public class Main
     {
         Set<Integer> set = new HashSet<>(numbers);
             if(set.size()==5)
-                for(int i = 0; i<5; i++)
+            {
+                for (int i = 0; i < 5; i++)
                 {
-                    set = new HashSet<>(numbers.subList(i, 3+i));
+                    set = new HashSet<>(numbers.subList(i, 3 + i));
                     if (set.size() == 1) player.setValue(HandValue.THREE_OF_A_KIND);
                 }
-            else twoPairsCheck(player,numbers);
+            }
+            if (player.getValue()==null) twoPairsCheck(player,numbers);
 
     }
 
@@ -213,7 +218,6 @@ public class Main
 
     }
 
-    // 11 22 33 4   11 22 345
     private static void pairCheck(Player player, List<Integer> numbers)
     {
         Set<Integer> set = new HashSet<>(numbers);
