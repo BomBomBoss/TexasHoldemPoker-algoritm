@@ -63,12 +63,11 @@ class Solver
             masterCombinationCheck(player);
         }
         findWinner(players);
-        sortByHighestCard(players);
         return outputResult(players);
     }
 
     // Sorting list of players by card combination strength
-    private static List<Player> findWinner(List<Player> players)
+    private static void findWinner(List<Player> players)
     {
         players.sort((player1, player2) ->
         {
@@ -76,15 +75,14 @@ class Solver
             HandValue value2 = (HandValue) player2.getValue();
             return value2.getStrength().compareTo(value1.getStrength());
         });
-        return players;
+        sortByHighestCard(players);
     }
 
     // input chain method for card combination check. Card separates to numbers and suits for convenience purpose
     private static void masterCombinationCheck(Player player)
     {
         List<Integer> numbers = player.getBoardAndPlayerCards().stream().map(x -> Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
-        List<String> cardSuits = player.getBoardAndPlayerCards().stream().map(x -> x.replaceAll("\\d", "")).collect(Collectors.toList());
-        Collections.sort(cardSuits);
+        List<String> cardSuits = player.getBoardAndPlayerCards().stream().map(x -> x.replaceAll("\\d", "")).sorted().collect(Collectors.toList());
 
         straightFlushCheck(player, numbers, cardSuits);
     }
