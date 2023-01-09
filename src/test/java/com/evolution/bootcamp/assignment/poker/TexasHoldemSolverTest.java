@@ -26,5 +26,25 @@ public class TexasHoldemSolverTest {
       "9h7h 2dTc KcAs 7sJd TsJc Qh8c 5c4h",
       Solver.process("texas-holdem 3d4s5dJsQd 5c4h 7sJd KcAs 9h7h 2dTc Qh8c TsJc"));
   }
+  @Test
+  public void test1FromReadme() {
+    assertEquals(
+            "Ac4d=Ad4s 5d6d As9s KhKd",
+            Solver.process("texas-holdem 4cKs4h8s7s Ad4s Ac4d As9s KhKd 5d6d"));
+  }
+
+  @Test
+  public void test2FromReadme() {
+    assertEquals(
+            "KdKs 9hJh",
+            Solver.process("texas-holdem 2h3h4h5d8d KdKs 9hJh"));
+  }
+
+  @Test
+  public void test3FullHouse() {
+    assertEquals(
+            "3d3s 4h4s",
+            Solver.process("texas-holdem 2h2d4h2s8d 3d3s 4h4s"));
+  }
 
 }

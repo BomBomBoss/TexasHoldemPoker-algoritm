@@ -2,36 +2,36 @@ package com.evolution.bootcamp.assignment.poker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class Player
 {
     private String combination;
-    private String[] sortedCombination;
+    private String[] convertedCombination;
 
     private Enum<HandValue> value;
 
     private String gameTitle;
 
     private String boardCombination;
-    private String[] boardCombinationSorted;
+    private String[] convertedBoardCombination;
+
+    public FullHouse getFullHouse()
+    {
+        return fullHouse;
+    }
+
+    public void setFullHouse(FullHouse fullHouse)
+    {
+        this.fullHouse = fullHouse;
+    }
+
     private List<String> boardAndPlayerCards;
 
-    private boolean isEquals = false;
+    private FullHouse fullHouse;
     public String getGameTitle()
     {
         return gameTitle;
-    }
-
-    public boolean isEquals()
-    {
-        return isEquals;
-    }
-
-    public void setEquals(boolean equals)
-    {
-        isEquals = equals;
     }
 
     public List<String> getBoardAndPlayerCards()
@@ -59,14 +59,14 @@ public class Player
         this.boardCombination = boardCombination;
     }
 
-    public String[] getBoardCombinationSorted()
+    public String[] getConvertedBoardCombination()
     {
-        return boardCombinationSorted;
+        return convertedBoardCombination;
     }
 
-    public void setBoardCombinationSorted(String[] boardCombinationSorted)
+    public void setConvertedBoardCombination(String[] convertedBoardCombination)
     {
-        this.boardCombinationSorted = boardCombinationSorted;
+        this.convertedBoardCombination = convertedBoardCombination;
     }
 
     public Player()
@@ -76,11 +76,11 @@ public class Player
     private Player(Builder builder)
     {
         setCombination(builder.combination);
-        setSortedCombination(builder.sortedCombination);
+        setConvertedCombination(builder.convertedCombination);
         setValue(builder.value);
         setGameTitle(builder.gameTitle);
         setBoardCombination(builder.boardCombination);
-        setBoardCombinationSorted(builder.boardCombinationSorted);
+        setConvertedBoardCombination(builder.convertedBoardCombination);
         setBoardAndPlayerCards(builder.boardAndPlayerCards);
     }
 
@@ -88,11 +88,11 @@ public class Player
     {
         Builder builder = new Builder();
         builder.combination = copy.getCombination();
-        builder.sortedCombination = copy.getSortedCombination();
+        builder.convertedCombination = copy.getConvertedCombination();
         builder.value = copy.getValue();
         builder.gameTitle = copy.getGameTitle();
         builder.boardCombination = copy.getBoardCombination();
-        builder.boardCombinationSorted = copy.getBoardCombinationSorted();
+        builder.convertedBoardCombination = copy.getConvertedBoardCombination();
         builder.boardAndPlayerCards = copy.getBoardAndPlayerCards();
         return builder;
     }
@@ -107,14 +107,14 @@ public class Player
         this.combination = combination;
     }
 
-    public String[] getSortedCombination()
+    public String[] getConvertedCombination()
     {
-        return sortedCombination;
+        return convertedCombination;
     }
 
-    public void setSortedCombination(String[] sortedCombination)
+    public void setConvertedCombination(String[] convertedCombination)
     {
-        this.sortedCombination = sortedCombination;
+        this.convertedCombination = convertedCombination;
     }
 
     public Enum<HandValue> getValue()
@@ -130,8 +130,8 @@ public class Player
     protected void combineAndSortCards()
     {
         boardAndPlayerCards = new ArrayList<>();
-        boardAndPlayerCards.addAll(List.of(boardCombinationSorted));
-        boardAndPlayerCards.addAll(List.of(sortedCombination));
+        boardAndPlayerCards.addAll(List.of(convertedBoardCombination));
+        boardAndPlayerCards.addAll(List.of(convertedCombination));
 
         boardAndPlayerCards.sort((o1, o2) ->
         {
@@ -147,11 +147,11 @@ public class Player
     {
         return "Player{" +
                 "combination='" + combination + '\'' +
-                ", sortedCombination=" + Arrays.toString(sortedCombination) +
+                ", sortedCombination=" + Arrays.toString(convertedCombination) +
                 ", value=" + value +
                 ", gameTitle='" + gameTitle + '\'' +
                 ", boardCombination='" + boardCombination + '\'' +
-                ", boardCombinationSorted=" + Arrays.toString(boardCombinationSorted) +
+                ", boardCombinationSorted=" + Arrays.toString(convertedBoardCombination) +
                 ", boardAndPlayerCards=" + boardAndPlayerCards +
                 '}';
     }
@@ -163,11 +163,11 @@ public class Player
     public static final class Builder
     {
         private String combination;
-        private String[] sortedCombination;
+        private String[] convertedCombination;
         private Enum<HandValue> value;
         private String gameTitle;
         private String boardCombination;
-        private String[] boardCombinationSorted;
+        private String[] convertedBoardCombination;
 
         private List<String> boardAndPlayerCards;
 
@@ -178,9 +178,9 @@ public class Player
             return this;
         }
 
-        public Builder sortedCombination(String[] val)
+        public Builder convertedCombination(String[] val)
         {
-            sortedCombination = val;
+            convertedCombination = val;
             return this;
         }
 
@@ -202,9 +202,9 @@ public class Player
             return this;
         }
 
-        public Builder boardCombinationSorted(String[] val)
+        public Builder convertedBoardCombination(String[] val)
         {
-            boardCombinationSorted = val;
+            convertedBoardCombination = val;
             return this;
         }
 
