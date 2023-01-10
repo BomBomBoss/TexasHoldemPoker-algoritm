@@ -1,6 +1,6 @@
 ## Implementation
 
-in this projects developer implemented Texas Holdem Poker game.
+In this projects developer implemented Texas Holdem Poker game.
 Main class with all game logic located in Solver.class. 
 Additionaly created classes:
 Player.class with player cards, board cards, combined player + board cards fields, card combination and others
@@ -16,7 +16,7 @@ For output there is certaing method who prints result and checks if player combi
 
 ## RUN
 
-Application can be checked and run in TexasHoldemSolverTest.java
+Application can be checked and run in TexasHoldemSolverTest.java.
 Additional custom unit tests were added
 
 ## Obvious weaknesses
