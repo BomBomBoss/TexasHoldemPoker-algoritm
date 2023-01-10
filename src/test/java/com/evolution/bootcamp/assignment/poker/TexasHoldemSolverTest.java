@@ -47,4 +47,18 @@ public class TexasHoldemSolverTest {
             Solver.process("texas-holdem 2h2d4h2s8d 3d3s 4h4s"));
   }
 
+  @Test
+  public void test4Straight() {
+    assertEquals(
+            "6h4s Jd3s",
+            Solver.process("texas-holdem 7h8d9hTs2d 6h4s Jd3s"));
+  }
+
+  @Test
+  public void test5Straight() {
+    assertEquals(
+            "Ah4s 6d3s",
+            Solver.process("texas-holdem 2h3d4hTs5d Ah4s 6d3s"));
+  }
+
 }

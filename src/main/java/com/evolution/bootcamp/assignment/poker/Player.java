@@ -16,9 +16,21 @@ public class Player
     private String boardCombination;
     private String[] convertedBoardCombination;
 
+    private Straight straightOptional;
+
     public FullHouse getFullHouse()
     {
         return fullHouse;
+    }
+
+    public Straight getStraightOptional()
+    {
+        return straightOptional;
+    }
+
+    public void setStraightOptional(Straight straightOptional)
+    {
+        this.straightOptional = straightOptional;
     }
 
     public void setFullHouse(FullHouse fullHouse)

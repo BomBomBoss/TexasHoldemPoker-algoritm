@@ -42,7 +42,7 @@ class Solver
         return winner(people);
     }
 
-    // Converting card's letter values to numbers using array indexes
+    // Converting card's letter values (A,K,Q,J,T) to numbers using array indexes
     private static String[] convert(String combination)
     {
         String[] separateCards = new String[combination.length() / 2];
@@ -87,24 +87,36 @@ class Solver
         straightFlushCheck(player, numbers, cardSuits);
     }
 
-    private static boolean isStraight(List<Integer> numbers)
+    private static boolean isStraight(Player player, List<Integer> numbers)
     {
+
+        if (new HashSet<>(numbers).containsAll(Arrays.asList(14,2,3,4,5)))
+        {
+            player.setStraightOptional(new Straight(Strength.WEAK));
+        }
+
         for (int y = 0; y < 3; y++)
         {
             int counter = 0;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numbers.size() - 1 - y; i++)
             {
                 if (numbers.get(y + i) - numbers.get(y + i + 1) == 1)
                 {
                     counter++;
-                    if (i == 3 && counter == 4)
+                    if (counter == 4)
                     {
+                        player.setStraightOptional(new Straight(Strength.STRONG));
                         return true;
                     }
                 }
+                else if (numbers.get(y + i) - numbers.get(y + i + 1) == 0)
+                {
+                     continue;
+                }
+                else counter = 0;
             }
         }
-        return false;
+        return player.getStraightOptional() != null;
     }
 
     private static boolean isFlush(List<String> suits)
@@ -127,13 +139,13 @@ class Solver
 
     private static void straightCheck(Player player, List<Integer> numbers)
     {
-        if (isStraight(numbers)) player.setValue(HandValue.STRAIGHT);
+        if (isStraight(player, numbers)) player.setValue(HandValue.STRAIGHT);
         else threeOfAKindCheck(player, numbers);
     }
 
     private static void straightFlushCheck(Player player, List<Integer> numbers, List<String> suits)
     {
-        if (isStraight(numbers) && isFlush(suits))
+        if (isStraight(player,numbers) && isFlush(suits))
         {
             player.setValue(HandValue.STRAIGHT_FLUSH);
         } else
@@ -203,7 +215,7 @@ class Solver
         else player.setValue(HandValue.HIGH_CARD);
     }
 
-    // method for sorting players when combination values are equal
+    // sort players when combination values are equal
     private static void sortByHighestCard(List<Player> players)
     {
         Set<HandValue> setOfStrength = players.stream().map(Player::getValue).map(x -> (HandValue) x).collect(Collectors.toSet());
@@ -220,13 +232,18 @@ class Solver
                     {
                        i = playersFullHouseHighCardFinder(players,i,player1,player2);
                     }
-                    i = playersHighCardFinder(players, i, player1, player2);
+                    else if(player1.getValue().equals(HandValue.STRAIGHT))
+                    {
+                        i = playerStrongerStraightFinder(players,i,player1,player2);
+                    }
+                    else i = playersHighCardFinder(players, i, player1, player2);
 
                 } else i++;
             }
         }
     }
 
+    // finding higher card from player's two cards
     private static int playersHighCardFinder(List<Player> players, int index, Player player1, Player player2)
     {
         List<Integer> playerOneCards = Arrays.stream(player1.getConvertedCombination()).map(x -> Integer.parseInt(x.replaceAll("\\D", ""))).collect(Collectors.toList());
@@ -302,6 +319,10 @@ class Solver
                 Collections.swap(players, index, index + 1);
                 index = 0;
             }
+            else if (player1.getFullHouse().getTwoCardNumber() == player2.getFullHouse().getTwoCardNumber())
+            {
+                index = playersHighCardFinder(players, index, player1, player2);
+            }
         } else index++;
         return index;
 
@@ -337,6 +358,24 @@ class Solver
             player.getFullHouse().setThreeCardNumber(threeCardNumber);
             player.getFullHouse().setTwoCardNumber(twoCardNumber);
         }
+    }
+    // deep Straight combination comparing including A2345
+    private static int playerStrongerStraightFinder(List<Player> players, int index, Player player1, Player player2)
+    {
+        Strength player1StraightStrength = (Strength) player1.getStraightOptional().getStrength();
+        Strength player2StraightStrength = (Strength) player2.getStraightOptional().getStrength();
+
+        if(player1StraightStrength.getStrength() > player2StraightStrength.getStrength())
+        {
+            Collections.swap(players, index, index + 1);
+            index = 0;
+        } else if (player1StraightStrength.getStrength() == player2StraightStrength.getStrength())
+        {
+            index = playersHighCardFinder(players,index,player1,player2);
+        }
+        else index ++;
+        return index;
+
     }
 
 }
