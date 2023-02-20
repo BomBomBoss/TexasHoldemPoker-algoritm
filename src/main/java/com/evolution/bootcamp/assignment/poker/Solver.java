@@ -42,7 +42,7 @@ class Solver
         return winner(people);
     }
 
-    // Converting card's letter values (A,K,Q,J,T) to numbers using array indexes
+    // Swap suits and numbers
     private static String[] convert(String combination)
     {
         String[] separateCards = new String[combination.length() / 2];
